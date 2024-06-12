@@ -3,21 +3,22 @@
 .PHONY build-reverse:
 build-reverse:
 	pushd plugins; \
-	pushd reverse; \
-	jco componentize reverse.js --wit ./wit/wasmio.wit -o reverse.wasm; \
-	wasm-tools strip ./reverse.wasm -o ../../reverse.wasm
+	pushd reverse-js; \
+	jco componentize reverse.js --wit ./wit/wasmio.wit -o reverse-js.wasm; \
+	mv reverse-js.wasm ../../
 
 .PHONY build-uppercase:
 build-uppercase: 
 	pushd plugins; \
-	pushd uppercase; \
-	cargo component build --target wasm32-unknown-unknown --release; \
-	mv ./target/wasm32-unknown-unknown/release/uppercase.wasm ../../
+	pushd uppercase-py; \
+    . venv/bin/activate; \
+	componentize-py -d wasmio.wit -w plugin componentize app -o uppercase-py.wasm; \
+	mv uppercase-py.wasm ../../
 
 .PHONY build-obfuscate:
 build-obfuscate: 
 	pushd plugins; \
-	pushd obfuscate; \
+	pushd obfuscate-rust; \
 	cargo component build --target wasm32-unknown-unknown --release; \
 	mv ./target/wasm32-unknown-unknown/release/obfuscate.wasm ../../
 

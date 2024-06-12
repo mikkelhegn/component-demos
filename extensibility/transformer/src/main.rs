@@ -25,10 +25,13 @@ fn process_transformers(mut message: String) -> anyhow::Result<String> {
     wasmtime_wasi::add_to_linker_sync(&mut linker)?;
 
     for plugin in plugins.iter() {
+        let mut ctx = WasiCtxBuilder::new();
+        ctx.inherit_stdio();
+
         let mut store = Store::new(
             &engine,
             MyState {
-                ctx: WasiCtxBuilder::new().build(),
+                ctx: ctx.build(),
                 table: ResourceTable::new(),
             },
         );
@@ -115,7 +118,7 @@ fn get_plugins_from_path(path: &str) -> anyhow::Result<Vec<PathBuf>> {
 }
 
 fn validate_user_input(input: &String) -> Result<(), Error> {
-    if input.trim().len() > 0 {
+    if !input.trim().is_empty() {
         return Ok(());
     }
     Err(Error::new(

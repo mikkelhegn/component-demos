@@ -1,5 +1,5 @@
 import plugin
 
 class Plugin(plugin.Plugin):
-    def transform(string) -> str:
+    def transform(self, string) -> str:
         return string
