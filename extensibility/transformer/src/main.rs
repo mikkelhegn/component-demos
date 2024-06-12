@@ -35,7 +35,7 @@ fn process_transformers(mut message: String) -> anyhow::Result<String> {
 
         // Load Component from the .wasm file
         let component = Component::from_file(&engine, plugin).map_err(|e| {
-            println!("Error while loading component {:?}", e);
+            println!("Error while loading component {:?}", e.backtrace().to_string());
             e
         })?;
 
@@ -53,8 +53,9 @@ fn process_transformers(mut message: String) -> anyhow::Result<String> {
         // invoke the transform function
         match f.call(store, &params, &mut results) {
             Ok(_) => (),
-            Err(_) => {
+            Err(e) => {
                 println!("Plugin {:?} failed upon invocation", plugin);
+                println!("{:?}", e);
                 break;
             }
         };
